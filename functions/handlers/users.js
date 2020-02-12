@@ -1,5 +1,6 @@
 const firebase = require("firebase");
 const config = require("../util/config");
+const cors = require("cors")({ origin: true });
 const {
   validateSignUpData,
   validateLogInData,
@@ -73,24 +74,39 @@ exports.login = (req, res) => {
     password: req.body.password
   };
 
-  const { valid, errors } = validateLogInData(user);
-  if (!valid) return res.status(400).json(errors);
+  console.log(req.body);
 
-  firebase
-    .auth()
-    .signInWithEmailAndPassword(user.email, user.password)
-    .then(data => {
-      return data.user.getIdToken();
-    })
-    .then(token => {
-      return res.json({ token });
-    })
-    .catch(err => {
-      console.error(err);
-      return res
-        .status(403)
-        .json({ general: "Wrong credentials , Please try again" });
-    });
+  res.set("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.set("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    // Send response to OPTIONS requests
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Authorization");
+    res.set("Access-Control-Max-Age", "3600");
+    res.status(204).send("");
+  } else {
+    const { valid, errors } = validateLogInData(user);
+    if (!valid) return res.status(400).json(errors);
+
+    console.log("Starting execution of login");
+
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(user.email, user.password)
+      .then(data => {
+        return data.user.getIdToken();
+      })
+      .then(token => {
+        return res.json({ token });
+      })
+      .catch(err => {
+        console.error(err);
+        return res
+          .status(403)
+          .json({ general: "Wrong credentials , Please try again" });
+      });
+  }
 };
 
 // Add user details
