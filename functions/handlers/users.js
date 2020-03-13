@@ -76,9 +76,6 @@ exports.login = (req, res) => {
 
   console.log(req.body);
 
-  res.set("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.set("Access-Control-Allow-Credentials", "true");
-
   if (req.method === "OPTIONS") {
     // Send response to OPTIONS requests
     res.set("Access-Control-Allow-Methods", "GET");

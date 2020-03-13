@@ -10,6 +10,7 @@ const {
   getScream
 } = require("./handlers/screams");
 const { FBAuth } = require("./util/FBAuth");
+
 const {
   signup,
   login,
@@ -21,6 +22,9 @@ const {
 } = require("./handlers/users");
 const express = require("express");
 const app = express();
+
+const cors = require("cors");
+app.use(cors());
 
 // SCREAMS
 
